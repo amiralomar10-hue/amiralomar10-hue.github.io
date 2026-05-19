@@ -1,9 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+    
+    // تأثير الكتابة المنظّم (Typing Effect) بدون Layout Shift
     const subtitle = document.querySelector(".subtitle");
     const text = "Informatics Engineering Student & Backend Developer";
     let index = 0;
 
-    subtitle.innerHTML = ""; 
     function typeEffect() {
         if (index < text.length) {
             subtitle.innerHTML += text.charAt(index);
@@ -11,8 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(typeEffect, 60);
         }
     }
-    typeEffect();
+    
+    // بدء تأثير الكتابة بعد انتهاء أنيميشن البروفايل الأصلي بقليل
+    setTimeout(typeEffect, 400);
 
+    // نظام المودال لعرض الشهادات بحجم أكبر
     const modal = document.getElementById("imgModal");
     const modalImg = document.getElementById("modalImg");
     const closeModal = document.querySelector(".close-modal");
@@ -25,26 +29,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     closeModal.onclick = () => modal.style.display = "none";
-    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
+    
+    // إغلاق المودال عند الضغط في أي مكان خارج الصورة
+    window.onclick = (e) => { 
+        if (e.target == modal) {
+            modal.style.display = "none";
+        }
+    }
 
+    // تأثير ظهور العناصر عند التمرير الذكي (Intersection Observer)
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
             }
         });
-    }, { threshold: 0.1 });
+    }, { 
+        threshold: 0.15 
+    });
 
     document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
 
+    // إنشاء زر العودة للأعلى آلياً وتنسيقه
     const backBtn = document.createElement("button");
     backBtn.innerHTML = "↑";
     backBtn.className = "back-to-top";
+    backBtn.setAttribute("aria-label", "Back to top");
     document.body.appendChild(backBtn);
 
     window.onscroll = () => {
-        if (window.scrollY > 400) backBtn.style.display = "block";
-        else backBtn.style.display = "none";
+        if (window.scrollY > 400) {
+            backBtn.style.display = "block";
+        } else {
+            backBtn.style.display = "none";
+        }
     };
 
     backBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
