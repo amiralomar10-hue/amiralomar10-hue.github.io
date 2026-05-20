@@ -21,31 +21,37 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalImg = document.getElementById("modalImg");
     const closeModal = document.querySelector(".close-modal");
 
-    document.querySelectorAll('.certificate-card img').forEach(img => {
-        img.onclick = function() {
-            modal.style.display = "flex";
-            modalImg.src = this.src;
-        }
-    });
+    // تحقق من وجود عناصر المودال أولاً لتجنب الأخطاء البرمجية
+    if (modal && modalImg && closeModal) {
+        document.querySelectorAll('.certificate-card img').forEach(img => {
+            img.onclick = function() {
+                modal.style.display = "flex";
+                modalImg.src = this.src;
+            }
+        });
 
-    closeModal.onclick = () => modal.style.display = "none";
-    
-    // إغلاق المودال عند الضغط في أي مكان خارج الصورة
-    window.onclick = (e) => { 
-        if (e.target == modal) {
-            modal.style.display = "none";
+        closeModal.onclick = () => modal.style.display = "none";
+        
+        // إغلاق المودال عند الضغط في أي مكان خارج الصورة
+        window.onclick = (e) => { 
+            if (e.target == modal) {
+                modal.style.display = "none";
+            }
         }
     }
 
-    // تأثير ظهور العناصر عند التمرير الذكي (Intersection Observer)
-    const observer = new IntersectionObserver((entries) => {
+    // تأثير ظهور العناصر عند التمرير الذكي (Intersection Observer) - تم تعديله ليناسب الموبايل
+    const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
+                // التوقف عن مراقبة العنصر بعد ظهوره لأول مرة لتوفير الأداء وحل مشاكل الموبايل
+                observer.unobserve(entry.target); 
             }
         });
     }, { 
-        threshold: 0.15 
+        threshold: 0.05, // تقليل النسبة لـ 5% ليظهر العنصر بمجرد ملامسته للشاشة
+        rootMargin: "0px 0px 50px 0px" // جعل التفاعل يبدأ مبكراً قبل دخول العنصر بالكامل
     });
 
     document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
@@ -57,13 +63,13 @@ document.addEventListener("DOMContentLoaded", () => {
     backBtn.setAttribute("aria-label", "Back to top");
     document.body.appendChild(backBtn);
 
-    window.onscroll = () => {
+    window.addEventListener('scroll', () => {
         if (window.scrollY > 400) {
             backBtn.style.display = "block";
         } else {
             backBtn.style.display = "none";
         }
-    };
+    });
 
     backBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 });
